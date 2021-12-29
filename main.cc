@@ -36,10 +36,30 @@ int main(int argc, char* argv[]) {
 	if (uflags.find("-T") != string::npos) {
 		cout << "Specialists thrown into the mix!\n";
 		types = true;
+		if (uflags.find("-L") != string::npos) {
+			cout << "Legendaries added into the fray!\n";
+			legends = true;
+		}
 	}
 	if (uflags.find("-C") != string::npos) {
 		cout << "Color maniacs join in for the fun!\n";
 		colors = true;
+		if (uflags.find("-T") != string::npos) {
+			cout << "Specialists thrown into the mix!\n";
+			types = true;
+			if (uflags.find("-L") != string::npos) {
+				cout << "Legendaries added into the fray!\n";
+				legends = true;
+			}
+		}
+		else if (uflags.find("-L") != string::npos) {
+			cout << "Legendaries added into the fray!\n";
+			legends = true;
+			if (uflags.find("-T") != string::npos) {
+				cout << "Specialists thrown into the mix!\n";
+				types = true;
+			}
+		}
 	}
 	else if (uflags == "NONE") {
 		legends = false;
