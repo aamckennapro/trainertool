@@ -382,7 +382,7 @@ int main(int argc, char* argv[]) {
 	cout << "Enjoy your new trainer!\n";
 	cout << "Press ENTER to exit.\n";
 	string buh;
-	getline(cin, buh);
+	//getline(cin, buh);
 	getline(cin, buh);
 	if (buh == "\n")
 		exit(EXIT_SUCCESS);
