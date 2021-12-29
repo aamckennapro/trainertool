@@ -4,7 +4,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
-#define CSV_IO_NO_THREAD
+//#define CSV_IO_NO_THREAD
 #include "csv.h"
 using namespace std;
 
@@ -17,11 +17,11 @@ int main(int argc, char* argv[]) {
 	bool legends = false, types = false, colors = false;
 	string uflags;
 	cout << "Welcome to Aaron's Trainer Randomizer. The following options are available:" << endl;
-	cout << "'-L': Legendary flag, Legendary trainers are now in the pool. This means that if the trainer\n";
-	cout << "      is a Legendary or Master Trainer, they *will* now use legendary Pokemon.\n";
+	cout << "'-L': Legendary flag, Legendary trainers are now in the pool. This means that ANY trainer\n";
+	cout << "      can have up to six legendary Pokemon. Prepare for trouble!\n";
 	cout << "'-T': Type flag, trainers will use type themed teams - meaning they will use one type of Pokemon.\n";
-	cout << "      There is a natural chance of this already happening, being 1 in 24. This flag adds the \"Specialist\"\n";
-	cout << "      into the mix.\n";
+	cout << "      There is a natural chance of this already happening, being 1 in 12. This flag adds the \"Specialist\"\n";
+	cout << "      into the pool, as well as a handful of other type-specific classes.\n";
 	cout << "'-C': Color flag, similar to type flag but with colors instead.\n";
 	cout << "      Like types, there's already a natural chance of this happening.\n";
 	cout << "Would you like to add any flags? (Type them in now - case sensitive! - and space them out)\n";
@@ -358,6 +358,14 @@ int main(int argc, char* argv[]) {
 	cout << names[nameDex] << "\n";*/
 
 	printTrainer(trainerClass, trainerName, trainerRegion, team);
+	cout << "\n";
+	cout << "Enjoy your new trainer!\n";
+	cout << "Press ENTER to exit.\n";
+	string buh;
+	getline(cin, buh);
+	getline(cin, buh);
+	if (buh == "\n")
+		exit(EXIT_SUCCESS);
 }
 
 int getTeamSize() {
