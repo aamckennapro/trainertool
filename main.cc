@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 	cout << "      Like types, there's already a natural chance of this happening.\n";
 	cout << "Would you like to add any flags? (Type them in now - case sensitive! - and space them out)\n";
 	cout << "Your flags (if you want none, type NONE): ";
-	cin >> uflags;
+	getline(cin, uflags);
 	cout << "Randomizing trainers based on user flags." << endl;
 
 	if (uflags.find("-L") != string::npos) {
