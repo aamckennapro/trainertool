@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 //#define CSV_IO_NO_THREAD
 #include "csv.h"
 using namespace std;
@@ -15,7 +16,7 @@ void printTrainer(string tClass, string name, string region, vector<string> mons
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
 	bool legends = false, types = false, colors = false;
-	string uflags;
+	string uflags, trainerNum;
 	cout << "Welcome to Aaron's Trainer Randomizer. The following options are available:" << endl;
 	cout << "'-L': Legendary flag, Legendary trainers are now in the pool. This means that ANY trainer\n";
 	cout << "      can have up to six legendary Pokemon. Prepare for trouble!\n";
@@ -27,7 +28,8 @@ int main(int argc, char* argv[]) {
 	cout << "Would you like to add any flags? (Type them in now - case sensitive! - and space them out)\n";
 	cout << "Your flags (if you want none, type NONE): ";
 	getline(cin, uflags);
-	cout << "Randomizing trainers based on user flags." << endl;
+	cout << "How many trainers would you like to generate? (Numeric characters only (0-9)!): ";
+	getline(cin, trainerNum);
 
 	if (uflags.find("-L") != string::npos) {
 		cout << "Legendaries added into the fray!\n";
@@ -331,44 +333,49 @@ int main(int argc, char* argv[]) {
 	}
 
 	//cout << "Files loaded. Starting randomization.\n";
+	int trainerInt = stoi(trainerNum);
+	for (int i = 0; i < trainerInt; i++) {
+		int size = getTeamSize();
+		//srand(time(0));
+		int nameDex = rand() % names.size(); 
 
-	int size = getTeamSize();
-	//srand(time(0));
-	int nameDex = rand() % names.size(); 
+		int regionDex = rand() % regions.size();
+		//cout << regionDex << endl;
 
-	int regionDex = rand() % regions.size();
-	//cout << regionDex << endl;
+		//cout << "buh\n";
+		int trainerDex = rand() % trainers.size();
+		//cout << trainerDex << endl;
 
-	//cout << "buh\n";
-	int trainerDex = rand() % trainers.size();
-	//cout << trainerDex << endl;
+		vector<string> team;
+		bool gmax = false, mega = false; // changes to true if a gmax & mega happens
+		for (int loop = 0; loop < size; loop++) {
+			//srand(time(NULL));
+			if ((mons[rand() % mons.size()]).find("GIGANTAMAX") != string::npos) {
+				if (gmax || mega) {
+					//cout << "Already have a Gmax\n";
+					loop--; // subtracts one from loop to account for a member not being added
+				}
+				else {
+					gmax = true;
+					team.push_back(mons[rand() % mons.size()]);
+				}
 
-	vector<string> team;
-	bool gmax = false, mega = false; // changes to true if a gmax & mega happens
-	for (int loop = 0; loop < size; loop++) {
-		//srand(time(NULL));
-		if ((mons[rand() % mons.size()]).find("GIGANTAMAX") != string::npos) {
-			if (gmax || mega) {
-				//cout << "Already have a Gmax\n";
-				loop--; // subtracts one from loop to account for a member not being added
+				if (!mega) {
+					mega = true;
+					team.push_back(mons[rand() % mons.size()]);
+				}
 			}
-			else {
-				gmax = true;
+			else 
 				team.push_back(mons[rand() % mons.size()]);
-			}
-
-			if (!mega) {
-				mega = true;
-				team.push_back(mons[rand() % mons.size()]);
-			}
 		}
-		else 
-			team.push_back(mons[rand() % mons.size()]);
-	}
 
-	string trainerClass = trainers[trainerDex];
-	string trainerName = names[nameDex];
-	string trainerRegion = regions[regionDex];
+		string trainerClass = trainers[trainerDex];
+		string trainerName = names[nameDex];
+		string trainerRegion = regions[regionDex];
+		cout << "Trainer " << (i + 1) << ":\n";
+		printTrainer(trainerClass, trainerName, trainerRegion, team);
+		sleep(1); // this is to let the system clock update for a new rand seed
+	}
 
 	//cout << "The before times\n";
 	/*for (string nom : names) {
@@ -377,9 +384,8 @@ int main(int argc, char* argv[]) {
 	/*cout << "Name: "; 
 	cout << names[nameDex] << "\n";*/
 
-	printTrainer(trainerClass, trainerName, trainerRegion, team);
 	cout << "\n";
-	cout << "Enjoy your new trainer!\n";
+	cout << "Enjoy your new trainer(s)!\n";
 	cout << "Press ENTER to exit.\n";
 	string buh;
 	//getline(cin, buh);
