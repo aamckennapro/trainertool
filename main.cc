@@ -15,89 +15,68 @@ void printTrainer(string tClass, string name, string region, vector<string> mons
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	bool legends = false, types = false, colors = false;
+	bool legends = false, types = false, colors = false, eggs = false;
 	string uflags, trainerNum;
 	cout << "Welcome to Aaron's Trainer Randomizer. The following options are available:" << endl;
 	cout << "'-L': Legendary flag, Legendary trainers are now in the pool. This means that ANY trainer\n";
-	cout << "      can have up to six legendary Pokemon. Prepare for trouble!\n";
+	cout << "      can have up to six legendary Pokemon, and are GUARANTEED at least one.\n"; 
+	cout<<  "      Prepare for trouble!\n";
 	cout << "'-T': Type flag, trainers will use type themed teams - meaning they will use one type of Pokemon.\n";
 	cout << "      There is a natural chance of this already happening, being 1 in 12. This flag adds the \"Specialist\"\n";
 	cout << "      into the pool, as well as a handful of other type-specific classes.\n";
 	cout << "'-C': Color flag, similar to type flag but with colors instead.\n";
 	cout << "      Like types, there's already a natural chance of this happening.\n";
+	cout << "'-E': Egg group flag, much like colors and types. Already a natural chance of occurring.\n";
 	cout << "Would you like to add any flags? (Type them in now - case sensitive! - and space them out)\n";
 	cout << "Your flags (if you want none, type NONE): ";
 	getline(cin, uflags);
 	cout << "How many trainers would you like to generate? (Numeric characters only (0-9)!): ";
 	getline(cin, trainerNum);
 
-	if (uflags.find("-L") != string::npos) {
-		cout << "Legendaries added into the fray!\n";
-		legends = true;
-	}
-	if (uflags.find("-T") != string::npos) {
-		cout << "Specialists thrown into the mix!\n";
-		types = true;
+	int position = 0;
+	while (position < uflags.length()) {
 		if (uflags.find("-L") != string::npos) {
 			cout << "Legendaries added into the fray!\n";
 			legends = true;
+			position += 2;
 		}
-	}
-	if (uflags.find("-C") != string::npos) {
-		cout << "Color maniacs join in for the fun!\n";
-		colors = true;
 		if (uflags.find("-T") != string::npos) {
-			cout << "Specialists thrown into the mix!\n";
+			cout << "Type specialists are now available trainers!\n";
 			types = true;
-			if (uflags.find("-L") != string::npos) {
-				cout << "Legendaries added into the fray!\n";
-				legends = true;
-			}
+			position += 2;
 		}
-		else if (uflags.find("-L") != string::npos) {
-			cout << "Legendaries added into the fray!\n";
-			legends = true;
-			if (uflags.find("-T") != string::npos) {
-				cout << "Specialists thrown into the mix!\n";
-				types = true;
-			}
-		}
-	}
-	else if (uflags == "NONE") {
-		legends = false;
-		types = false;
-		colors = false;
-	}
-
-	string flag1, flag2, flag3;
-
-	if (argc > 1) { // gross if chain is gross don't look at it if you like having eyes
-		flag1 = argv[1];
-		if ("-L" == flag1)
-			legends = true;
-		if ("-T" == flag1)
-			types = true;
-		if ("-C" == flag1)
+		if (uflags.find("-C") != string::npos) {
+			cout << "Color collectors are now available trainers!\n";
 			colors = true;
-		if (argc > 2) {
-			flag2 = argv[2];
-			if ("-L" == flag2)
-				legends = true;
-			if ("-T" == flag2)
-				types = true;
-			if ("-C" == flag2)
-				colors = true;
-			if (argc > 3) {
-				flag3 = argv[3];
-				if ("-L" == flag3)
-					legends = true;
-				if ("-T" == flag3)
-					types = true;
-				if ("-C" == flag3)
-					colors = true;
-			}
+			position += 2;
+		}
+		if (uflags.find("-E") != string::npos) {
+			cout << "Egg group breeders are now available trainers!\n";
+			eggs = true;
+			position += 2;
+		}
+		else if (position == uflags.length() || position > uflags.length())
+			break;
+
+		else {
+			legends = false;
+			types = false;
+			colors = false;
+			break;
 		}
 	}
+
+	/*if (types || colors || eggs) {
+		cout << "All trainers will have the same types, colors, or eggs by default.\n";
+		cout << "This can, however, be altered.\n";
+		cout << "Type 'YES' if you'd like all trainers to follow a type, color, or egg\n";
+		cout << "theme but not share the same theme: ";
+		string themePrompt;
+		getline(cin, themePrompt);
+		if (themePrompt == "YES") {
+			cout << "Themes will differ across trainers.\n";
+		}
+	}*/
 
 	// Here comes a bunch of repeated code oops
 
@@ -107,19 +86,27 @@ int main(int argc, char* argv[]) {
 	ifstream opener;
 	vector<string> names;
 	string line;
-	int typeTheme = 0, colorTheme = 0;
+	int typeTheme = 0, colorTheme = 0, eggTheme = 0;
 	bool gender = rand() % 2; // 0 or 1
-	if (!types) 
+	if (!types) {
 		typeTheme = rand() % 12;
 		//cout << typeTheme << endl;
 		if (typeTheme == 11)
 			types = true;
-	if (!colors)
+	}
+	if (!colors) {
 		colorTheme = rand() % 12;
 		//cout << colorTheme << endl;
 		if (colorTheme == 11)
 			colors = true;
+	}
+	if (!eggs) {
+		eggTheme = rand() % 12;
+		if (eggTheme == 11)
+			eggs = true;
+	}
 	if (!gender) {
+		cout << "Feminine\n";
 		opener.open("./data/names-f.csv");
 		if (opener) {
 			while (getline(opener, line)) {
@@ -132,6 +119,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	else {
+		cout << "Masculine\n";
 		opener.open("./data/names-m.csv");
 		if (opener) {
 			while (getline(opener, line)) {
@@ -183,75 +171,128 @@ int main(int argc, char* argv[]) {
 	else 
 		cerr << "Error: cannot open file - colors.csv\n";
 
-	string selType;
+	vector<string> fileEggs;
+	ifstream eggfile("./data/eggs.csv", ifstream::in);
+	if (eggfile) {
+		while (getline(eggfile, line))
+			fileEggs.push_back(line);
+		eggfile.close();
+	}
+
+	//cout << "Themes print here." << endl;
+
+	int trainerInt = stoi(trainerNum);
+
+	string selPrim, selSec;
+	bool typeCheck = false; // if typeCheck is false, there's only one type instead of two
 	if (types) {
-		int rnum = rand() % monTypes.size();
-		selType = monTypes[rnum];
-		cout << "Type theme: " << selType << endl;
+		if ((rand() % 2) == 1) { 
+			typeCheck = true;
+		}
+		if (typeCheck) {
+			int rnum = rand() % monTypes.size();
+			selPrim = monTypes[rnum];
+			sleep(1);
+			rnum = rand() % monTypes.size();
+			selSec = monTypes[rnum];
+			cout << "Type Theme: " << selPrim << " & " << selSec << endl; 
+		}
+		else {
+			int rnum = rand() % monTypes.size();
+			selPrim = monTypes[rnum];
+			selSec = selPrim;
+			cout << "Type Theme: " << selPrim << endl;
+		}
 	}
 
 	string selColor;
 	if (colors) {
 		selColor = fileColors[rand() % fileColors.size()];
-		cout << "Color theme: " << selColor << endl;
+		cout << "Color Theme: " << selColor << endl;
+	}
+
+	string selEgg;
+	if (eggs) {
+		selEgg = fileEggs[rand() % fileEggs.size()];
+		cout << "Egg Group Theme: " << selEgg << endl;
 	}
 
 	//cout << "Starting trainers!\n"; 
 	vector<string> trainers;
-	if (types) {
-		io::CSVReader<2> in("./data/trainer-t.csv");
-		in.read_header(io::ignore_extra_column, "TRAINER", "PRIMARY");
+	// Note:
+	// trainer-t.csv is now the DEFAULT file. It will ALWAYS be loaded.
+	// The only difference now is that EVERY trainer class has a primary
+	// and secondary type. Whenever !types, all trainer classes will be
+	// loaded. This means that if !types, Dragon Tamers could have a team
+	// of 3 Fire Types and an Electric type for instance.
+	// Does this make a ton of sense? Not really! But in order to keep
+	// things truly random, I believe this is the best approach.
+	// This now includes the type "ANY", which means that if types are
+	// true these classes will be always added into the pool since they
+	// can use any type.
+
+	io::CSVReader<3> trainType("./data/trainer-t.csv");
+	trainType.read_header(io::ignore_extra_column, "TRAINER", "PRIMARY", "SECONDARY");
+	string fileTrain, filePrim, fileSec;
+	while (trainType.read_row(fileTrain, filePrim, fileSec)) {
+		if (types) {
+			if (filePrim == selPrim || fileSec == selPrim || filePrim == "ANY" || fileSec == "ANY"
+				|| filePrim == selSec || fileSec == selSec) {
+				trainers.push_back(fileTrain);
+			}
+		}
+		else {
+			trainers.push_back(fileTrain);
+		}
+	}
+
+	if (colors) {
+		io::CSVReader<2> in("./data/trainer-c.csv");
+		in.read_header(io::ignore_extra_column, "TRAINER", "COLOR");
 		string fileTrain, filePrim;
 		while (in.read_row(fileTrain, filePrim)) {
-			if (filePrim == selType) {
+			if (filePrim == selColor) {
 				trainers.push_back(fileTrain);
 			}
 		}
 	}
+
+	if (!gender) {
+		io::CSVReader<3> in("./data/trainer-f.csv");
+		in.read_header(io::ignore_extra_column, "TRAINER", "PRIMARY", "SECONDARY");
+		string fileTrain, filePrim, fileSec;
+		while (in.read_row(fileTrain, filePrim, fileSec)) {
+			if (types) {
+				if (filePrim == selPrim || fileSec == selPrim || filePrim == "ANY" || fileSec == "ANY"
+					|| filePrim == selSec || fileSec == selSec) {
+					trainers.push_back(fileTrain);
+				}
+			}
+			else 
+				trainers.push_back(fileTrain);
+			}
+		}
+
 	else {
-		//cout << "Starting trainers.\n";
-		ifstream trainerfile("./data/trainer.csv", ifstream::in);
-		if (trainerfile) {
-			while (getline(trainerfile, line)) {
-				//cout << line << endl;
-				trainers.push_back(line);
+		io::CSVReader<3> in("./data/trainer-m.csv");
+		in.read_header(io::ignore_extra_column, "TRAINER", "PRIMARY", "SECONDARY");
+		string fileTrain, filePrim, fileSec;
+		while (in.read_row(fileTrain, filePrim, fileSec)) {
+			if (types) {
+				if (filePrim == selPrim || fileSec == selPrim || filePrim == "ANY" || fileSec == "ANY"
+					|| filePrim == selSec || fileSec == selSec) {
+					trainers.push_back(fileTrain);
+				}
 			}
-			trainerfile.close();
-		}
-		else {
-			cerr << "Error: cannot open file - trainer.csv\n";
+			else
+				trainers.push_back(fileTrain);
 		}
 
-		if (!gender) {
-			trainerfile.open("./data/trainer-f.csv");
-			if (trainerfile) {
-				while (getline(trainerfile, line)) {
-					trainers.push_back(line);
-				}
-				trainerfile.close();
-			}
-			else {
-				cerr << "Error: cannot open file - trainer-f.csv\n";
-			}
-		}
-
-		else {
-			trainerfile.open("./data/trainer-m.csv");
-			if (trainerfile) {
-				while (getline(trainerfile, line)) {
-					trainers.push_back(line);
-				}
-				trainerfile.close();
-			}
-			else {
-				cerr << "Error: cannot open file - trainer-m.csv\n";
-			}
-		}
-		//cout << "Done!\n";
 	}
+		//cout << "Done!\n";
 
 	//cout << "Starting species.\n";
-	vector<string> mons;
+	vector<string> mons, legendaries;
 	io::CSVReader<6> in("./data/species-update.csv");
 	in.read_header(io::ignore_extra_column, "SPECIES", "TYPE 1", "TYPE 2", "COLOR", "EGG GROUP 1", "EGG GROUP 2");
 	string species, primary, secondary, color, egg1, egg2;
@@ -259,33 +300,48 @@ int main(int argc, char* argv[]) {
 
 		if (types) {
 			//cout << "Type time" << endl;
-			if (colors) { // types And colors
+			if (colors && (eggs != true)) { // types And colors
 				//cout << "Color time" << endl;
-				if ((selType == primary || selType == secondary) && (selColor == color)) {
+				if ((selPrim == primary || selPrim == secondary || selSec == primary || selSec == secondary) 
+					 && (selColor == color)) {
 					mons.push_back(species);
-					/*type1.push_back(primary);
-					type2.push_back(secondary);
-					monColors.push_back(color);
-					eG1.push_back(egg1);
-					eG2.push_back(egg2);*/
+				}
+			}
+			else if (colors && eggs) { // types, colors, and eggs
+				if ((selPrim == primary || selPrim == secondary || selSec == primary || selSec == secondary) 
+					 && (selColor == color) && (selEgg == egg1 || selEgg == egg2)) {
+					mons.push_back(species);
+				}
+			}
+			else if (eggs && (colors != true)) { // types and eggs
+				if ((selPrim == primary || selPrim == secondary || selSec == primary || selSec == secondary) 
+					 && (selEgg == egg1 || selEgg == egg2)) {
+					mons.push_back(species);
 				}
 			}
 			else { // just types
-				if (selType == primary || selType == secondary) {
+				if (selPrim == primary || selPrim == secondary || selSec == primary || selSec == secondary) {
 					mons.push_back(species);
-					/*type1.push_back(primary);
-					type2.push_back(secondary);
-					monColors.push_back(color);
-					eG1.push_back(egg1);
-					eG2.push_back(egg2);*/
 				}
 			}
 		}
 		else if (colors) { // just colors
-			if (selColor == color) {
-				mons.push_back(species);
+			if (eggs) { // colors and eggs
+				if ((selColor == color) && (selEgg == egg1 || selEgg == egg2)) {
+					mons.push_back(species);
+				}
+			}
+			else {
+				if (selColor == color) {
+					mons.push_back(species);
+				}
 			}
 		}
+		else if (eggs) { // just eggs
+			if (selEgg == egg1 || selEgg == egg2)
+				mons.push_back(species);
+		}
+
 		else { // all mons
 			mons.push_back(species);
 			/*type1.push_back(primary);
@@ -302,38 +358,56 @@ int main(int argc, char* argv[]) {
 		io::CSVReader<6> legends("./data/legendary.csv");
 		legends.read_header(io::ignore_extra_column, "SPECIES", "TYPE 1", "TYPE 2", "COLOR", "EGG GROUP 1", "EGG GROUP 2");
 		string spe, pri, sec, col, e1, e2;
-		while (in.read_row(spe, pri, sec, col, e1, e2)) {
+		while (legends.read_row(spe, pri, sec, col, e1, e2)) {
 			if (types) {
-				if (colors) { // colors and types
-					if ((selType == pri || selColor == sec || pri == "ANY" || sec == "ANY") 
+				if (colors && eggs) { // eggs, colors, and types
+					if ((selPrim == pri || selColor == sec || pri == "ANY" || sec == "ANY") 
+						&& (selColor == col) && (selEgg == e1 || selEgg == e2)) {
+						legendaries.push_back(spe);
+					}
+				}
+				else if (colors && (eggs != true)) { // colors and types
+					if ((selPrim == pri || selColor == sec || pri == "ANY" || sec == "ANY") 
 						&& (selColor == col)) {
-						mons.push_back(spe);
+						legendaries.push_back(spe);
+					}
+				}
+				else if (eggs && (colors != true)) { // eggs and types
+					if ((selPrim == pri || selColor == sec || pri == "ANY" || sec == "ANY") 
+						&& (selEgg == e1 || selEgg == e2)) {
+						legendaries.push_back(spe);
 					}
 				}
 				else { // just types
-					if (selType == pri || selColor == sec || pri == "ANY" || sec == "ANY") {
-						mons.push_back(spe);
+					if (selPrim == pri || selColor == sec || pri == "ANY" || sec == "ANY") {
+						legendaries.push_back(spe);
 					}
 				}
 			}
 			else if (colors) { // just colors
-				if (selColor == col) {
-					mons.push_back(spe);
+				if (eggs) { // colors and eggs
+					if ((selColor == col) && (selEgg == e1 || selEgg == e2)) {
+						legendaries.push_back(spe);
+					}
+				}
+				else {
+					if (selColor == col) {
+						legendaries.push_back(spe);
+					}
+				}
+			}
+			else if (eggs) { // just eggs
+				if (selEgg == e1 || selEgg == e2) {
+					legendaries.push_back(spe);
 				}
 			}
 			else { // pushes back All mons
-				mons.push_back(spe);
+				legendaries.push_back(spe);
 			}
-			/*type1.push_back(pri);
-			type2.push_back(sec);
-			monColors.push_back(col);
-			eG1.push_back(e1);
-			eG2.push_back(e2);*/
 		}
 	}
 
 	//cout << "Files loaded. Starting randomization.\n";
-	int trainerInt = stoi(trainerNum);
 	for (int i = 0; i < trainerInt; i++) {
 		int size = getTeamSize();
 		//srand(time(0));
@@ -347,26 +421,41 @@ int main(int argc, char* argv[]) {
 		//cout << trainerDex << endl;
 
 		vector<string> team;
+		bool flipLegend = false;
 		bool gmax = false, mega = false; // changes to true if a gmax & mega happens
 		for (int loop = 0; loop < size; loop++) {
-			//srand(time(NULL));
-			if ((mons[rand() % mons.size()]).find("GIGANTAMAX") != string::npos) {
-				if (gmax || mega) {
-					//cout << "Already have a Gmax\n";
-					loop--; // subtracts one from loop to account for a member not being added
-				}
-				else {
-					gmax = true;
-					team.push_back(mons[rand() % mons.size()]);
-				}
-
-				if (!mega) {
-					mega = true;
-					team.push_back(mons[rand() % mons.size()]);
-				}
+			int flipRand = rand() % 6;
+			if (flipRand == 5) {
+				if (legends)
+					flipLegend = true;
 			}
-			else 
-				team.push_back(mons[rand() % mons.size()]);
+
+			if (flipLegend) {
+				cout << "A legend comes to life!\n";
+				team.push_back(legendaries[rand() % legendaries.size()]);
+			}
+
+			else {
+				if (((mons[rand() % mons.size()]).find("GIGANTAMAX") != string::npos) || ((mons[rand() % mons.size()]).find("MEGA") != string::npos)) {
+					if (gmax || mega) {
+						//cout << "Already have a Gmax\n";
+						loop--; // subtracts one from loop to account for a member not being added
+					}
+					else {
+						gmax = true;
+						team.push_back(mons[rand() % mons.size()]);
+					}
+
+					if (!mega) {
+						mega = true;
+						team.push_back(mons[rand() % mons.size()]);
+					}
+				}
+				else 
+					team.push_back(mons[rand() % mons.size()]);
+			}
+
+			flipLegend = false; // resets flipLegend
 		}
 
 		string trainerClass = trainers[trainerDex];
@@ -377,15 +466,13 @@ int main(int argc, char* argv[]) {
 		sleep(1); // this is to let the system clock update for a new rand seed
 	}
 
-	//cout << "The before times\n";
-	/*for (string nom : names) {
-		cout << nom << endl;
-	}*/
-	/*cout << "Name: "; 
-	cout << names[nameDex] << "\n";*/
-
 	cout << "\n";
-	cout << "Enjoy your new trainer(s)!\n";
+	if (trainerInt == 1) {
+		cout << "Enjoy your new trainer!\n";
+	}
+	else {
+		cout << "Enjoy your new trainers!\n";
+	}
 	cout << "Press ENTER to exit.\n";
 	string buh;
 	//getline(cin, buh);
